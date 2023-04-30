@@ -107,10 +107,10 @@ my $commit_message_file = 'c:\dev\430\message.txt';
 #my $home_dir = dirname(__FILE__);
 my $home_dir = glob('~/.rami');  # TODO: use File::HomeDir
 
-
+shift;   # HACK: currently the first argument is always -c
 my $source_revision = shift;
 if ( ! $source_revision ) {
-	print "Usage: $0 <revision_number>\n";
+	print "Usage: $0 -c <revision_number>\n";
 	exit 1;
 }
 
