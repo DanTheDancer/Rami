@@ -5,8 +5,8 @@ use strict;
 use warnings;
 
 use File::Basename;
-use File::Spec;  # Will use later for Windows file names.
-use Path::Class; # Will use later for Windows file names.
+#use File::Spec;  # Will use later for Windows file names.
+#use Path::Class; # Will use later for Windows file names.
 
 
 =head1 NAME
