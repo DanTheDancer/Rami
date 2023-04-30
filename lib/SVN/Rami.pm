@@ -131,7 +131,11 @@ sub load_csv_as_map {
 	open(my $handle, '<', $filename) or die "Could not read $filename\n";
 	$_ = <$handle>;
 	close $handle;
-	return split( /,|\R/ );
+	my @contents = split( /,|\R/ );
+	
+	# Hack: the first two items are column headings.
+	(undef, undef, my @result) = @contents;
+	return @result;
 }
 
 my %branch_to_path_on_filesystem = load_csv_as_map("$home_dir/paths.csv");
