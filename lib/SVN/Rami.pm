@@ -104,7 +104,9 @@ the same terms as the Perl 5 programming language system itself.
 
 my $commit_message_file = 'c:\dev\430\message.txt';
 
-my $home_dir = dirname(__FILE__);
+#my $home_dir = dirname(__FILE__);
+my $home_dir = glob('~/.rami');  # TODO: use File::HomeDir
+
 
 my $source_revision = shift;
 if ( ! $source_revision ) {
