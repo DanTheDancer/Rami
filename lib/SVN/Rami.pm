@@ -24,22 +24,35 @@ our $VERSION = '0.01';
 
 =head1 SYNOPSIS
 
-Quick summary of what the module does.
-
-Perhaps a little code snippet.
-
-    use SVN::Rami;
-
-    my $foo = SVN::Rami->new();
-    ...
+Should be invoked from the command line.
 
 =head1 SUBROUTINES/METHODS
 
-=head2 function1
+=head2 load_csv_as_map
+
+Reads a two-column CSV file and converts it to key-value pairs.
+For example, if the file contains one line consisting of "a,b",
+this method returns a mapping of "a" to "b".
+The file is assumed to have no headers.
+
+BUG: the file must be formatted precisely right: even an empty
+line in the middle of the file will result in an incorrect mapping.
+
+TODO: use Text::CSV instead.
 
 =cut
 
-sub function1 {
+sub load_csv_as_map {
+	my $filename = shift;
+	local $/ = undef; # Slurp mode
+	open(my $handle, '<', $filename) or die "Could not read $filename\n";
+	$_ = <$handle>;
+	close $handle;
+	my @contents = split( /,|\R/ );
+	
+	# Hack: the first two items are column headings.
+	(undef, undef, my @result) = @contents;
+	return @result;
 }
 
 =head2 function2
@@ -102,11 +115,6 @@ the same terms as the Perl 5 programming language system itself.
 =cut
 
 
-my $commit_message_file = 'c:\dev\430\message.txt';
-
-#my $home_dir = dirname(__FILE__);
-my $home_dir = glob('~/.rami');  # TODO: use File::HomeDir
-
 shift;   # HACK: currently the first argument is always -c
 my $source_revision = shift;
 if ( ! $source_revision ) {
@@ -114,34 +122,19 @@ if ( ! $source_revision ) {
 	exit 1;
 }
 
-#
-# Reads a two-column CSV file and converts it to key-value pairs.
-# For example, if the file contains one line consisting of "a,b",
-# this method returns a mapping of "a" to "b".
-# The file is assumed to have no headers.
-#
-# BUG: the file must be formatted precisely right: even an empty
-# line in the middle of the file will result in an incorrect mapping.
-#
-# TODO: use Text::CSV instead.
-#
-sub load_csv_as_map {
-	my $filename = shift;
-	local $/ = undef; # Slurp mode
-	open(my $handle, '<', $filename) or die "Could not read $filename\n";
-	$_ = <$handle>;
-	close $handle;
-	my @contents = split( /,|\R/ );
-	
-	# Hack: the first two items are column headings.
-	(undef, undef, my @result) = @contents;
-	return @result;
-}
 
-my %branch_to_path_on_filesystem = load_csv_as_map("$home_dir/paths.csv");
+my $commit_message_file = 'c:\dev\430\message.txt';
+
+my $repo = 'default';  # TODO: support more than one repo.
+my $rami_home = glob("~/.rami/repo/$repo");  # TODO: use File::HomeDir
+my $conf_dir = "$rami_home/conf";
+
+die "Expected directory $conf_dir\n" unless -d $conf_dir;
+
+my %branch_to_path_on_filesystem = load_csv_as_map("$conf_dir/paths.csv");
 
 # We need the list of branches to be in order.
-my @branch_to_url_array = load_csv_as_map("$home_dir/urls.csv");
+my @branch_to_url_array = load_csv_as_map("$conf_dir/urls.csv");
 my %branch_to_url = @branch_to_url_array;
 my @branches = grep( !/^http/, @branch_to_url_array);  # HACK: remove URLs, leaving only versions, IN ORDER!
 
