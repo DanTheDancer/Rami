@@ -15,33 +15,38 @@ SVN::Rami - Automates merging to multiple branches
 
 =head1 VERSION
 
-Version 0.0.1
+Version 0.1
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.1';
 
 
 =head1 SYNOPSIS
 
-Should be invoked from the command line.
+Should be invoked from the command line:
+
+  perl -e "use SVN::Rami;" -c <version-number>
+
+This is version 0.1, still mainly a proof-of-concept.
 
 =head1 SUBROUTINES/METHODS
 
-=head2 load_csv_as_map
-
-Reads a two-column CSV file and converts it to key-value pairs.
-For example, if the file contains one line consisting of "a,b",
-this method returns a mapping of "a" to "b".
-The file is assumed to have no headers.
-
-BUG: the file must be formatted precisely right: even an empty
-line in the middle of the file will result in an incorrect mapping.
-
-TODO: use Text::CSV instead.
+=head2 No publicly available subroutines at this time
 
 =cut
 
+#
+#Reads a two-column CSV file and converts it to key-value pairs.
+#For example, if the file contains one line consisting of "a,b",
+#this method returns a mapping of "a" to "b".
+#The file is assumed to have no headers.
+#
+#BUG: the file must be formatted precisely right: even an empty
+#line in the middle of the file will result in an incorrect mapping.
+#
+#TODO: use Text::CSV instead.
+#
 sub load_csv_as_map {
 	my $filename = shift;
 	local $/ = undef; # Slurp mode
@@ -100,9 +105,9 @@ L<https://metacpan.org/release/SVN-Rami>
 
 =back
 
+=head1 SEE ALSO
 
-=head1 ACKNOWLEDGEMENTS
-
+SVK::Merge
 
 =head1 LICENSE AND COPYRIGHT
 
