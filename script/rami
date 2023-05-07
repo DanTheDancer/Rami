@@ -17,4 +17,4 @@ if ( ! $source_revision ) {
 	exit 1;
 }
 
-merge_main($source_revision);
+SVN::Rami::rami_main($source_revision);
