@@ -1,0 +1,20 @@
+#!perl
+use strict;
+use warnings;
+
+package rami;
+
+# PODNAME: rami
+# ABSTRACT: automate merging to an arbitrary number of branches
+
+use SVN::Rami;
+
+
+shift;   # HACK: currently the first argument is always -c
+my $source_revision = shift;
+if ( ! $source_revision ) {
+	print "Usage: $0 -c <revision_number>\n";
+	exit 1;
+}
+
+merge_main($source_revision);
