@@ -176,11 +176,11 @@ which is the SVN revision which shoulde be merged.
 sub rami_main {
 	my $source_revision = shift;
 	
-	my $commit_message_file = 'c:\dev\430\message.txt';
-
 	my $repo = 'default';  # TODO: support more than one repo.
 	my $rami_home = glob("~/.rami/repo/$repo");  # TODO: use File::HomeDir
 	my $conf_dir = "$rami_home/conf";
+	my $commit_message_file = "$rami_home/temp/message.txt";
+	print "### $commit_message_file\n";
 
 	die "Expected directory $conf_dir\n" unless -d $conf_dir;
 
