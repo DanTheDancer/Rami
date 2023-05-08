@@ -15,20 +15,20 @@ SVN::Rami - Automates merging to multiple branches
 
 =head1 VERSION
 
-Version 0.1
+Version 0.20
 
 =cut
 
-our $VERSION = '0.1';
+our $VERSION = '0.20';
 
 
 =head1 SYNOPSIS
 
 Should be invoked from the command line:
 
-  perl -e "use SVN::Rami;" -c <version-number>
+  rami -c <version-number>
 
-This is version 0.1, still mainly a proof-of-concept.
+This version is still mainly a proof-of-concept
 
 =head1 SUBROUTINES/METHODS
 
