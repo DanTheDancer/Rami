@@ -28,11 +28,11 @@ our $VERSION = '0.20';
 
 =head1 SYNOPSIS
 
+Used by F<script/rami>. This is not (yet) a stand-alone module.
+
 Should be invoked from the command line:
 
   rami -c <version-number>
-
-This version is still mainly a proof-of-concept
 
 =head1 SUBROUTINES/METHODS
 
