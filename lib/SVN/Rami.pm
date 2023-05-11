@@ -5,8 +5,12 @@ use strict;
 use warnings;
 
 use File::Basename;
+use File::Path qw(make_path remove_tree);
 #use File::Spec;  # Will use later for Windows file names.
 #use Path::Class; # Will use later for Windows file names.
+
+# TODO: clearly define the words "version", "revision", "branch". (Maybe "version" isn't the right word to use.)
+# TODO: sanitize version names: they should contain only \w and hyphen.
 
 
 =head1 NAME
@@ -31,6 +35,10 @@ Should be invoked from the command line:
 This version is still mainly a proof-of-concept
 
 =head1 SUBROUTINES/METHODS
+
+There are currently no publicly available methods because
+this module is only intended to be used by the script "rami",
+as explained above.
 
 =cut
 
@@ -166,25 +174,33 @@ sub find_revision {
 }
 
 
-=head2 rami_main
+#=head2 rami_main
+#
+#The main module. Currently takes one argument,
+#which is the SVN revision which shoulde be merged.
+#
+#=cut
 
-The main module. Currently takes one argument,
-which is the SVN revision which shoulde be merged.
-
-=cut
+# HACK: define these as essentially global for now.
+our $repo = 'default';  # TODO: support more than one repo.
+our $rami_home_dir = glob("~/.rami/repo/$repo");  # TODO: use File::HomeDir
+our $conf_dir = "$rami_home_dir/conf";
+our $temp_dir = "$rami_home_dir/temp";
+our $commit_message_file = "$temp_dir/message.txt";
+our $url_csv_file = "$conf_dir/paths.csv";
 
 sub rami_main {
 	my $source_revision = shift;
 	
-	my $repo = 'default';  # TODO: support more than one repo.
-	my $rami_home = glob("~/.rami/repo/$repo");  # TODO: use File::HomeDir
-	my $conf_dir = "$rami_home/conf";
-	my $commit_message_file = "$rami_home/temp/message.txt";
-	print "### $commit_message_file\n";
+	my $conf_dir = $SVN::Rami::conf_dir;
+	my $commit_message_file = $SVN::Rami::commit_message_file;
+	my $url_csv_file = $SVN::Rami::url_csv_file;
+	
+	#print "### $commit_message_file\n";
 
 	die "Expected directory $conf_dir\n" unless -d $conf_dir;
 
-	my %branch_to_path_on_filesystem = load_csv_as_map("$conf_dir/paths.csv");
+	my %branch_to_path_on_filesystem = load_csv_as_map($url_csv_file);
 
 	# We need the list of branches to be in order.
 	my @branch_to_url_array = load_csv_as_map("$conf_dir/urls.csv");
@@ -254,5 +270,31 @@ sub rami_main {
 		die "Unrecognized branch $source_branch\n";
 	}
 }
+
+#=head2 load_config_from_SVN_url
+#
+#Secondary function: initializes based on a configuration
+#file which is loaded from SVN.
+#Takes one argument, which is the name of the config file.
+#
+#=cut
+
+sub load_config_from_SVN_url {
+	my $svn_url = shift;  # URL of our config file in SVN.
+	my $rami_home_dir = $SVN::Rami::rami_home_dir;
+	my $conf_dir = $SVN::Rami::conf_dir;
+	my $temp_dir = $SVN::Rami::temp_dir;
+
+	# TODO: don't wipe out the old configuration until we know that the new configuration exists.
+	
+	remove_tree $rami_home_dir if -d $rami_home_dir;
+	make_path $conf_dir, $temp_dir;
+	
+	my $export_command = "svn export --force $svn_url $conf_dir";
+	print "$export_command\n";
+	my $result_of_export = `$export_command`;
+	die "Failed to load configuration from SVN\n" unless ($result_of_export =~ m/Export complete/);
+}
+
 
 1; # End of SVN::Rami
