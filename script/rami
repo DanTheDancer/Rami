@@ -67,19 +67,18 @@ use SVN::Rami;
 
 # TODO: parse equals sign: --load-repo-config-from-svn-url=http://...
 my $load_config_from_SVN_arg = '--load-repo-config-from-svn-url';
+# my $help_command = '--help';
 
-my $command = shift;   # Usually this is '-c'
-my $source_revision = shift;
-my $valid_command = ($command eq '-c' or $command eq $load_config_from_SVN_arg);
-if ( not $source_revision or not $valid_command ) {
-	print "Usage: $0 -c <revision_number>\n";
-	print "or: $0 $load_config_from_SVN_arg <SVN-URL>\n";
-	exit 1;
-}
+my $command = shift || '';   # If there is no command-line arg, it is ''.
 
-if ($command eq $load_config_from_SVN_arg) {
-	SVN::Rami::load_config_from_SVN_url($source_revision);
-} else {
+if ($command eq '-c') {
 	# The usual case.
+	my $source_revision = shift;
 	SVN::Rami::rami_main($source_revision);
+} elsif ($command =~ /^$load_config_from_SVN_arg=(.*)$/) {
+	SVN::Rami::load_config_from_SVN_url($1);
+} else {
+	print "Usage: $0 -c <revision_number>\n";
+	print "or: $0 $load_config_from_SVN_arg=<SVN-URL>\n";
+	exit 1;
 }
