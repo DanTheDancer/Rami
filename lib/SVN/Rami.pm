@@ -175,12 +175,12 @@ sub find_revision {
 
 # HACK: define these as essentially global for now.
 our $repo = 'default';  # TODO: support more than one repo.
-our $rami_home_dir = glob("~/.rami/repo/$repo");  # TODO: use File::HomeDir
+our $rami_home_dir = glob("~/.rami/repo/$repo");  # TODO: use File::HomeDir instead of ~/
 our $conf_dir = "$rami_home_dir/conf";
 our $temp_dir = "$rami_home_dir/temp";
 our $commit_message_file = "$temp_dir/message.txt";
-our $path_csv_file = "$conf_dir/paths.csv";
-
+our $path_csv_file = "$conf_dir/paths.csv";    # Not currently used.
+our $root_work_dir = "$rami_home_dir/work";    # Holds a subdirectory for each branch.
 
 
 #=head2 rami_main
@@ -201,12 +201,14 @@ sub rami_main {
 
 	die "Expected directory $conf_dir\n" unless -d $conf_dir;
 
-	my %branch_to_path_on_filesystem = load_csv_as_map($path_csv_file);
+	# my %branch_to_path_on_filesystem = load_csv_as_map($path_csv_file);
 
 	# We need the list of branches to be in order.
 	my @branch_to_url_array = load_csv_as_map("$conf_dir/urls.csv");
 	my %branch_to_url = @branch_to_url_array;
 	my @branches = grep( !/^http/, @branch_to_url_array);  # HACK: remove URLs, leaving only versions, IN ORDER!
+	
+	my %branch_to_path_on_filesystem = map { $_ => convert_branches_to_filesystem_paths($_) } @branches;
 
 	my %revision_details = find_revision($source_revision, %branch_to_url);
 	if ( ! %revision_details ) {
@@ -285,16 +287,44 @@ sub load_config_from_SVN_url {
 	my $rami_home_dir = $SVN::Rami::rami_home_dir;
 	my $conf_dir = $SVN::Rami::conf_dir;
 	my $temp_dir = $SVN::Rami::temp_dir;
+	my $root_work_dir = $SVN::Rami::root_work_dir;
 
 	# TODO: don't wipe out the old configuration until we know that the new configuration exists.
 	
 	remove_tree $rami_home_dir if -d $rami_home_dir;
-	make_path $conf_dir, $temp_dir;
+	make_path $conf_dir, $temp_dir, $root_work_dir;
 	
 	my $result_of_export = EXEC("svn export --force $svn_url $conf_dir");
 	die "Failed to load configuration from SVN\n" unless ($result_of_export =~ m/Export complete|Exported revision/);
+
+	# Load the branches.
+	# This code is COPY-AND-PASTED from rami_main().
+	my @branch_to_url_array = load_csv_as_map("$conf_dir/urls.csv");
+	my %branch_to_url = @branch_to_url_array;
+	my @branches = grep( !/^http/, @branch_to_url_array);  # HACK: remove URLs, leaving only versions, IN ORDER!
 	
-	# TODO: checkout the directories.
+	# Checkout the branches onto the local filesystem.
+	while (my($branch,$url) = each(%branch_to_url)) {
+		my $filesystem_path = convert_branches_to_filesystem_paths($branch);
+		my $command = "svn checkout $url $filesystem_path";
+		print "$command\n";
+		system($command);
+	}
+}
+
+#
+# Converts a list of logical branch names to the place on the filesystem where they should be.
+#
+# Example: convert_branches_to_filesystem_paths('trunk')
+# might return '/home/bob/.rami/repo/default/work/bob'
+#
+# In list context, returns a list.
+# In scalar context, returns the first item of the list.
+#
+sub convert_branches_to_filesystem_paths {
+	my $rami_home_dir = $SVN::Rami::rami_home_dir;
+	my @result = map { "$rami_home_dir/work/$_" } @_;
+	return wantarray ? @result : $result[0];
 }
 
 #
