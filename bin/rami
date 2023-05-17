@@ -59,9 +59,9 @@ package rami;
 # ABSTRACT: automate merging to an arbitrary number of branches
 
 # To invoke this script from the dev environment, use:
-#   perl -Ilib script\rami
+#   perl -Ilib bin\rami
 # For example:
-#   perl -Ilib script\rami -c 84987 
+#   perl -Ilib bin\rami -c 84987 
 
 use SVN::Rami;
 
@@ -77,6 +77,8 @@ if ($command eq '-c') {
 	SVN::Rami::rami_main($source_revision);
 } elsif ($command =~ /^$load_config_from_SVN_arg=(.*)$/) {
 	SVN::Rami::load_config_from_SVN_url($1);
+} elsif ($command eq '--version') {
+	print "rami version ${SVN::Rami::VERSION}\n";
 } else {
 	print "Usage: $0 -c <revision_number>\n";
 	print "or: $0 $load_config_from_SVN_arg=<SVN-URL>\n";
