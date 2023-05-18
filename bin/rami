@@ -12,6 +12,12 @@ Should be invoked from the command line:
 
   rami -c <version-number>
 
+=head1 BUGS
+
+When run from Cygwin, rami uses the Cygwin user's home directory,
+which is different from the Windows user's home directory.
+This means that rami on Cygwin and rami on Windows do not share the same configuration.
+
 =head1 SUPPORT
 
 You can find documentation for this module with the perldoc command.
