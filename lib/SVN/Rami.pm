@@ -19,7 +19,7 @@ SVN::Rami - Automates merging to multiple branches
 
 =cut
 
-our $VERSION = '0.202';
+our $VERSION = '0.203';
 
 
 =head1 SYNOPSIS
