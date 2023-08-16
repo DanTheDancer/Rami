@@ -52,6 +52,9 @@ Rami keeps a local copy of all the branches, even when it is not running.
 on your hard drive at once.)
 This makes Rami run faster, but uses a lot of disk space.
 
+Rami might interpret the branch name (which should be something like "trunk" or "3.1")
+as an SVN URL if the name starts with something like "http:" or "svn:".
+
 =head1 SUPPORT
 
 You can find documentation for this module with the perldoc command.
@@ -105,9 +108,9 @@ package rami;
 # ABSTRACT: automate merging to an arbitrary number of branches
 
 # To invoke this script from the dev environment, use:
-#   perl -Ilib bin\rami
+#   perl -Ilib "bin\rami"
 # For example:
-#   perl -Ilib bin\rami -c 84987 
+#   perl -Ilib "bin\rami" -c 84987 
 
 use SVN::Rami;
 
