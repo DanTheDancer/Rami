@@ -292,7 +292,7 @@ sub load_config_from_SVN_url {
 
 	# TODO: don't wipe out the old configuration until we know that the new configuration exists.
 	
-	windows_safe_remove_tree $rami_home_dir if -d $rami_home_dir;
+	remove_tree $rami_home_dir if -d $rami_home_dir;
 	make_path $conf_dir, $temp_dir, $root_work_dir;
 	
 	my $result_of_export = EXEC("svn export --force $svn_url $conf_dir");
