@@ -77,9 +77,15 @@ L<https://metacpan.org/release/SVN-Rami>
 
 =back
 
+=head1 ETYMOLOGY
+
+"Rami" is Latin for "to the branch."
+It would be more correct to call it "to the branches," but that would be "Ramis",
+which would be easily confused with L<a certain programming language|https://en.wikipedia.org/wiki/RAMIS_(software)>.
+
 =head1 SEE ALSO
 
-SVK::Merge
+L<SVK::Merge|https://metacpan.org/pod/SVK::Merge>
 
 =head1 LICENSE AND COPYRIGHT
 

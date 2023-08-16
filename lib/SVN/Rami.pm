@@ -221,29 +221,21 @@ sub rami_main {
 	}
 }
 
-#
-# Same as File::Path::remove_tree, but provides a work-around for
-# a Windows bug involving very long filenames.
-#
-# Briefly put, you can't use remove_tree to remove paths that have
-# more than 258 characters.
-#
-#
-#
 
 =head2 windows_safe_remove_tree
 
-	windows_safe_remove_tree 'foo/bar', '/tmp', "c:\\temp"
+	windows_safe_remove_tree "foo/bar", "c:\\temp"
 
-Removes a directory and all its sub-directories.
+B<This function is still in beta.> Removes a directory and all its sub-directories.
 Same as L<File::Path::remove_tree|https://metacpan.org/pod/File::Path>,
 but provides a work-around for a Windows issue involving very long filenames.
 Works on all operating systems, not just Windows.
 
+
 =head3 Statement of the problem
 
 On Windows it is possible to create files that have more than 
-L<MAX_PATH|https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file?redirectedfrom=MSDN>=260
+L<MAX_PATH|https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file?redirectedfrom=MSDN#maximum-path-length-limitation>=260
 characters, but Windows will
 L<report errors when you try to delete them|https://appuals.com/fix-source-file-names-are-larger-than-is-supported-by-the-file-system/>.
 If you try to delete them manually, you might see this error message:
@@ -393,7 +385,7 @@ L<https://metacpan.org/release/SVN-Rami>
 
 =head1 SEE ALSO
 
-SVK::Merge
+L<SVK::Merge|https://metacpan.org/pod/SVK::Merge>
 
 =head1 LICENSE AND COPYRIGHT
 
